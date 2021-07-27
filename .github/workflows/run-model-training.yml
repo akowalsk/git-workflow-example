@@ -1,0 +1,19 @@
+name: Run Model Training
+on: [push]
+jobs:
+  Create-Training-Job:
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install trainml
+    - name: Create Training Job
+      run: python scripts/run_training.py
+      env:
+        - TRAINML_USER: ${{ secrets.TRAINML_USER }}
+        - TRAINML_KEY: ${{ secrets.TRAINML_KEY }}
+
+
