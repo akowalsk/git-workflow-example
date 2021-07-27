@@ -15,7 +15,7 @@ jobs:
       - name: Create Training Job
         run: python scripts/run_training.py
         env:
-          - TRAINML_USER: ${{ secrets.TRAINML_USER }}
-          - TRAINML_KEY: ${{ secrets.TRAINML_KEY }}
+          TRAINML_USER: ${{ secrets.TRAINML_USER }}
+          TRAINML_KEY: ${{ secrets.TRAINML_KEY }}
 
 
