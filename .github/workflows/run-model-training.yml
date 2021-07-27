@@ -2,6 +2,7 @@ name: Run Model Training
 on: [push]
 jobs:
   Create-Training-Job:
+    if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

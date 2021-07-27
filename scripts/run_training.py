@@ -22,7 +22,7 @@ async def create_job(build_serial):
         ),
         model=dict(
             source_type="git",
-            source_uri=f"https://github.com/{os.environ.get('GITHUB_REPOSITORY')}.git",
+            source_uri=f"{os.environ.get('GITHUB_SERVER_URL')}/{os.environ.get('GITHUB_REPOSITORY')}.git",
         ),
     )
 
