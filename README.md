@@ -17,21 +17,21 @@ Before beginning this example, ensure that you have satisfied the following prer
 
 ## GitHub Setup
 
-On GitHub, fork the example repository (https://github.com/trainML/git-workflow-example) using the Fork button in the upper right.  Once the fork is complete, navigate to the `Settings` tab of the new repository, and click `Secrets`. Create two new repository secrets (through the `New Repository Secret` button in the upper right) called `TRAINML_USER` and `TRAINML_KEY`.  Set their values to the `user` and `key` properties of a `credentials.json` file of a [trainML API key](https://docs.trainml.ai/reference/cli-sdk#authentication) for your trainML account.
+On GitHub, fork the example repository (https://github.com/trainML/git-workflow-example) using the `Fork` button in the upper right.  Once the fork is complete, navigate to the `Settings` tab of the new repository, and click `Secrets`. Create two new repository secrets (through the `New Repository Secret` button in the upper right) called `TRAINML_USER` and `TRAINML_KEY`.  Set their values to the `user` and `key` properties of a `credentials.json` file of a [trainML API key](https://docs.trainml.ai/reference/cli-sdk#authentication) for your trainML account.
 
 Go to the `Actions` tab of your repository and click the button to enable workflows.
 
 ## Executing the Workflow
 
-To activate the workflow, make a minor change to the README.md file and commit your changed to the `master` branch.  On the `Actions` tab, you will see a new workflow run.  When the workflow run completes, expand the `Create Training Job` step to see the log output from the training job creation.
+To activate the workflow, make a minor change to the `README.md` file and commit your changes to the `master` branch.  On the `Actions` tab, you will see a new workflow run.  When the workflow run completes, expand the `Create Training Job` step to see the log output from the training job creation.
 
 Navigate to the [trainML Training Job Dashboard](https://app.trainml.ai/jobs/training).  You will see a new job called `Git Automated Training - <commit hash>`.  Click the `View` button to observe the training progress.
 
-When the training job finishes, navigate to the [trainML Models Dashboard](https://app.trainml.ai/models).  Here you will see the saved model with both the code and the training artifacts from the specific commit that originally initiated the workflow.  This model can now be used for subsequent [inference jobs](https://docs.trainml.ai/getting-started/running-inference/), or examined with a [notebook jobs](https://docs.trainml.ai/getting-started/running-notebook/).
+When the training job finishes, navigate to the [trainML Models Dashboard](https://app.trainml.ai/models).  Here you will see the saved model with both the code and the training artifacts from the specific commit that originally initiated the workflow.  This model can now be used for subsequent [inference jobs](https://docs.trainml.ai/getting-started/running-inference/), or examined with a [notebook](https://docs.trainml.ai/getting-started/running-notebook/).
 
 ## Understanding the process
 
-The `.github/workflows` and `scripts` folder contain the files that facilitate this process.  The rest of the repository represents the model code itself.  The `.github/workflows` folder contains the yml files that define the GitHub workflows and the `scripts` folder includes the files that are ran by the steps in the workflow.  These files are what use the [trainML SDK](https://github.com/trainML/trainml-cli) to provision resources on the trainML platform.
+The `.github/workflows` and `scripts` folder contain the files that facilitate this process.  The rest of the repository represents the model code itself.  The `.github/workflows` folder contains the yml files that define the GitHub workflows and the `scripts` folder includes the files that are ran by the steps in the workflow.  The `scripts` files are what use the [trainML SDK](https://github.com/trainML/trainml-cli) to provision resources on the trainML platform.
 
 ### run-model-training.yml
 
@@ -61,7 +61,7 @@ jobs:
           TRAINML_KEY: ${{ secrets.TRAINML_KEY }}
 ```
 
-This file directs GitHub to run this workflow when a change is pushed to the respository.  The workflow consists of a single job called `Create-Training-Job` that will only run if the push is to the `master` branch.  This job has 4 steps.  The first pulls the repository and checks out the commit, the next two setup the environment and install the dependencies, and the last runs the `run_training.py` Python script in the `scripts` folder.  The last step uses [GitHub Secrets](https://docs.github.com/en/actions/reference/encrypted-secrets) to make the trainML API Keys available as environment variables.  By using these exact environment variables, the trainML SDK will use them implicitly for [authentication](https://github.com/trainML/trainml-cli/blob/master/README.md#environment-variables).
+This file directs GitHub to run this workflow when a change is pushed to the repository.  The workflow consists of a single job called `Create-Training-Job` that will only run if the push is to the `master` branch.  This job has 4 steps.  The first pulls the repository and checks out the commit, the next two setup the environment and install the dependencies, and the last runs the `run_training.py` script from the `scripts` folder.  The last step uses [GitHub Secrets](https://docs.github.com/en/actions/reference/encrypted-secrets) to make the trainML API Keys available as environment variables.  By using these exact environment variable names, the trainML SDK will use them implicitly for [authentication](https://github.com/trainML/trainml-cli/blob/master/README.md#environment-variables).
 
 ### run_training.py
 
@@ -106,8 +106,8 @@ if __name__ == "__main__":
     print(job)
 ```
 
-The `create_job` function creates a new job with the name `Git Automated Training - {build_serial}` where the `build_serial` is available as the `GITHUB_SHA` environment variable.  The worker command explicitly checks out this specific commit that is creating the training job to avoid a race condition between job creation and new commits being pushed to the master.  The rest of the command simply runs the model training code with the desired parameters.
+The `create_job` function creates a new job with the name `Git Automated Training - {build_serial}` where the `build_serial` is available as the `GITHUB_SHA` environment variable.  The worker command explicitly checks out this specific commit to avoid a race condition between job creation and new commits being pushed to the master.  The rest of the command simply runs the model training code with the desired parameters.
 
-Since the purpose of this process is to evaluate the training results of new model code updates, this file hard codes the use dataset (in this case, to ImageNet) so that all commits will be trained on the same data.  The model definition is specified using boiler-plate code that automatically sets it as the git repository that is calling this workflow.
+Since the purpose of this process is to evaluate the training results of new model code updates, this file hard codes the dataset (in this case, to ImageNet) so that all commits will be trained on the same data.  The model definition is specified using boiler-plate code that automatically sets it as the git repository that is calling this workflow.
 
 Because the `output_type` is set to `trainml` the results of this training run will be saved as a [trainML Model](https://docs.trainml.ai/reference/models/) with the job name prefixed by `Job - `, so the model name will also include the build serial.
