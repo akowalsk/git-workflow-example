@@ -27,7 +27,7 @@ To activate the workflow, make a minor change to the README.md file and commit y
 
 Navigate to the [trainML Training Job Dashboard](https://app.trainml.ai/jobs/training).  You will see a new job called `Git Automated Training - <commit hash>`.  Click the `View` button to observe the training progress.
 
-When the training job finishes, navigate to the [trainML Models Dashboard](https://app.trainml.ai/models).  Here you will see the saved model with both the code and the training artifacts from the specific commit that originally initiated the workflow.  This model can now be used for subsequent [inference jobs](https://docs.trainml.ai/getting-started/running-training/), or examined with a [notebook jobs](https://docs.trainml.ai/getting-started/running-notebook/).
+When the training job finishes, navigate to the [trainML Models Dashboard](https://app.trainml.ai/models).  Here you will see the saved model with both the code and the training artifacts from the specific commit that originally initiated the workflow.  This model can now be used for subsequent [inference jobs](https://docs.trainml.ai/getting-started/running-inference/), or examined with a [notebook jobs](https://docs.trainml.ai/getting-started/running-notebook/).
 
 ## Understanding the process
 
